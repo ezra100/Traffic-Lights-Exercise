@@ -1,4 +1,8 @@
+import javafx.scene.control.RadioButton;
+
 import javax.swing.JRadioButton;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +47,7 @@ public class Main {
 
         lights[16] = new StreetLight(1, 30, 555, 645);
 
-        TrafficLightFrame tlf = new TrafficLightFrame(" ���''� installation of traffic lights", lights);
+        TrafficLightFrame tlf = new TrafficLightFrame("  installation of traffic lights", lights);
 
         carsLight[0] = new CarsLight("YA cars light", lights[0], tlf.myPanel, 1, Arrays.asList(
                 new WalkersLight(lights[4], tlf.myPanel),
@@ -82,6 +86,7 @@ public class Main {
             butt[i].addActionListener(myListener);
             tlf.myPanel.add(butt[i]);
         }
+
         //4
         butt[0].setBounds(620, 30, 18, 18);
         //5
@@ -105,7 +110,12 @@ public class Main {
         butt[12].setBounds(50, 30, 155, 20);
         butt[12].setText("Shabat");
         butt[12].setOpaque(false);
-        butt[12].addActionListener(myListener);
+        butt[12].addActionListener(e -> {
+                    MainStatechart.shbatPress();
+                    JRadioButton button = (JRadioButton) e.getSource();
+                    button.setSelected(false);
+                }
+        );
         tlf.myPanel.add(butt[12]);
     }
 }

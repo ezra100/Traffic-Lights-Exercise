@@ -30,7 +30,12 @@ class WalkersLight extends Thread {
             switch (externalState) {
                 case ShabatMode:
                     setLight(LightMode.Blank);
-                    while (eventReciver.waitEvent() != WalkersLightEvent.RegularMode) ;
+                    WalkersLightEvent temp = null;
+                    do {
+                        temp = (WalkersLightEvent) eventReciver.waitEvent();
+                    }
+                    while (temp != WalkersLightEvent.RegularMode);
+                    externalState = ExternalState.RegularMode;
                     break;
                 case RegularMode:
                     runRegularMode(Collections.singletonList(WalkersLightEvent.ShabatMode));
