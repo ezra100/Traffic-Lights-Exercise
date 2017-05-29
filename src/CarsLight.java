@@ -27,7 +27,7 @@ public class CarsLight extends Thread {
         this.panel = panel;
         this.dependentWalkersLights = dependentWalkersLights;
 
-//		new CarsMaker(panel,this,key);
+        new CarsMaker(panel, this, key);
     }
 
 

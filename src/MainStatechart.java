@@ -6,7 +6,7 @@ import java.util.*;
 public class MainStatechart extends Thread {
 
     private static MainStatechart lastInstance;
-    final long DELAY = 10000;
+    final long DELAY = 3000;
     List<WalkersLight> independentLights;
     Event64 eventReciver = new Event64();
     private CarsLight YeminAvotLight, KanfeiNesharimLight, KNSideLight, FarbsteinLight;
