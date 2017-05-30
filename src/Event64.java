@@ -25,6 +25,7 @@ public class Event64 {
             try {
                 wait();
             } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         Object s = localData;
@@ -68,6 +69,7 @@ public class Event64 {
             try {
                 wait();
             } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         return true;

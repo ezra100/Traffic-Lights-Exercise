@@ -10,6 +10,7 @@ import javax.swing.JPanel;
  * @author �����
  */
 class BlinkingLight extends Thread {
+    @SuppressWarnings("FieldCanBeLocal")
     private final long Delay = 700;
     StreetLight streetLight;
     JPanel panel;

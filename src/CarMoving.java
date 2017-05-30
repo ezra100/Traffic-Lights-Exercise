@@ -87,9 +87,7 @@ public class CarMoving extends Thread {
         myLabel.setBounds(x, y, imageIcon.getIconWidth(), imageIcon.getIconHeight());
 
         while (!finish()) {
-            if (myLight.shouldCarsStop() && toStop())
-                ;
-            else {
+            if (!(myLight.shouldCarsStop() && toStop())) {
                 x += dx;
                 y += dy;
                 myLabel.setBounds(x, y, imageIcon.getIconWidth(), imageIcon.getIconHeight());

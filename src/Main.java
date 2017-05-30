@@ -1,12 +1,5 @@
-import javafx.scene.control.RadioButton;
-
 import javax.swing.JRadioButton;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /*
  * Created on Mimuna 5767  upDate on Addar 5772 

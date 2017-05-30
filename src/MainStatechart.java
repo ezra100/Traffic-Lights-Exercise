@@ -1,17 +1,23 @@
 import java.util.*;
 
+import com.google.common.base.Stopwatch;
 /**
- * Created by Ezra Steinmetz and Tomer Trabelsky on 22-May-17.
+ * Created by Ezra Steinmetz and Tomer Trabelsy on 22-May-17.
  */
 public class MainStatechart extends Thread {
 
     private static MainStatechart lastInstance;
-    final long DELAY = 10000;
     final int starvationLimit = 2;
+    final int starvationThreshold = 5;
+    private final long DELAY = 10000;
     List<WalkersLight> independentLights;
     Event64 eventReciver = new Event64();
-    int fSkipCounter = 0, KNSkipCounter = 0;
+    int FSkipCounter = 0, KNSkipCounter = 0, YASkipCounter = 0;
+    Stopwatch YASWatch = Stopwatch.createUnstarted(),
+            KNSWatch = Stopwatch.createUnstarted(), FSWatch = Stopwatch.createUnstarted();
+    Timer timer = new Timer();
     private CarsLight YeminAvotLight, KanfeiNesharimLight, KNSideLight, FarbsteinLight;
+
 
     public MainStatechart(CarsLight yeminAvotLight, CarsLight farbsteinLight, CarsLight KNSideLight, CarsLight kanfeiNesharimLight, List<WalkersLight> independentLights) {
         super("Main statechart");
@@ -23,7 +29,7 @@ public class MainStatechart extends Thread {
         lastInstance = this;
     }
 
-    public static void buttonPressAlert(int buttonKey) {
+    static void buttonPressAlert(int buttonKey) {
         MainSCEvent event = null;
         switch (buttonKey) {
             case 4:
@@ -63,7 +69,7 @@ public class MainStatechart extends Thread {
             WL.start();
         }
         ExternalState state = ExternalState.RegularMode;
-        MainSCEvent event = null;
+        MainSCEvent event;
         //noinspection InfiniteLoopStatement
         while (true) {
             switch (state) {
@@ -98,22 +104,13 @@ public class MainStatechart extends Thread {
         }
     }
 
-    public void sendEvent(MainSCEvent event) {
+    private void sendEvent(MainSCEvent event) {
         eventReciver.sendEvent(event);
     }
 
     private MainSCEvent runRegularMode(List<MainSCEvent> exitEvents) {
-        Timer timer = new Timer();
         MainSCEvent event = null;
-        YeminAvotLight.sendEvent(CarsEvent.TurnRed);
-        FarbsteinLight.sendEvent(CarsEvent.TurnRed);
-        KNSideLight.sendEvent(CarsEvent.TurnGreen);
-        independentLights.forEach(
-                (WL) -> WL.sendEvent(WalkersLightEvent.TurnGreen)
-        );
-        KanfeiNesharimLight.sendEvent(CarsEvent.TurnGreen);
-
-
+        goToKN();
         RegularSubState state = RegularSubState.KanfeiNesharim;
         timer.schedule(new TimerTask() {
             @Override
@@ -125,96 +122,118 @@ public class MainStatechart extends Thread {
             switch (state) {
                 case KanfeiNesharim:
                     event = (MainSCEvent) eventReciver.waitEvent();
-                    if (event == MainSCEvent.KNTimeout || event == MainSCEvent.KNPress || event == MainSCEvent.GoToYA) {
-                        if (event == MainSCEvent.KNTimeout) {
+                    if ((event == MainSCEvent.KNTimeout || event == MainSCEvent.KNPress || event == MainSCEvent.GoToYA)
+                            && (KNSkipCounter < starvationLimit || KNSWatch.elapsed().getSeconds() > starvationThreshold)) {
+                        if (KNSWatch.elapsed().getSeconds() > starvationThreshold) {
                             KNSkipCounter = 0;
+                        } else {
+                            KNSkipCounter++;
                         }
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                sendEvent(MainSCEvent.YATimeout);
-                            }
-                        }, DELAY);
-                        YeminAvotLight.sendEvent(CarsEvent.TurnGreen);
-                        KanfeiNesharimLight.sendEvent(CarsEvent.TurnRed);
-                        KNSideLight.sendEvent(CarsEvent.TurnRed);
-                        for (WalkersLight WL : independentLights) {
-                            WL.sendEvent(WalkersLightEvent.TurnRed);
-                        }
+                        goToYA();
                         state = RegularSubState.YeminAvot;
                     }
                     break;
                 case YeminAvot:
                     event = (MainSCEvent) eventReciver.waitEvent();
-                    if (event == MainSCEvent.YATimeout || event == MainSCEvent.YAPress) {
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                sendEvent(MainSCEvent.FTimeout);
-                            }
-                        }, DELAY);
-                        YeminAvotLight.sendEvent(CarsEvent.TurnRed);
-                        KNSideLight.sendEvent(CarsEvent.TurnGreen);
-                        FarbsteinLight.sendEvent(CarsEvent.TurnGreen);
+                    if ((event == MainSCEvent.YATimeout || event == MainSCEvent.YAPress)
+                            && (YASkipCounter < starvationLimit || YASWatch.elapsed().getSeconds() > starvationThreshold)) {
+                        if (YASWatch.elapsed().getSeconds() > starvationThreshold) {
+                            YASkipCounter = 0;
+                        } else {
+                            YASkipCounter++;
+                        }
+                        goToFarbstein();
                         state = RegularSubState.Farbstein;
                     }
-                    if (event == MainSCEvent.GoToKN && fSkipCounter < starvationLimit) {
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                sendEvent(MainSCEvent.KNTimeout);
-                            }
-                        }, DELAY);
-                        YeminAvotLight.sendEvent(CarsEvent.TurnRed);
-                        KanfeiNesharimLight.sendEvent(CarsEvent.TurnGreen);
-                        KNSideLight.sendEvent(CarsEvent.TurnGreen);
-                        for (WalkersLight WL : independentLights) {
-                            WL.sendEvent(WalkersLightEvent.TurnGreen);
-                        }
+                    if (event == MainSCEvent.GoToKN && FSkipCounter < starvationLimit
+                            && (YASkipCounter < starvationLimit || YASWatch.elapsed().getSeconds() > starvationThreshold)) {
+                        goToKN();
                         state = RegularSubState.KanfeiNesharim;
                     }
                     break;
                 case Farbstein:
                     event = (MainSCEvent) eventReciver.waitEvent();
-                    if (event == MainSCEvent.FTimeout || event == MainSCEvent.GoToKN) {
-                        if (event == MainSCEvent.FTimeout) {
-                            fSkipCounter = 0;
+                    if ((event == MainSCEvent.FTimeout || event == MainSCEvent.GoToKN)
+                            && (FSkipCounter < starvationLimit || FSWatch.elapsed().getSeconds() > starvationThreshold)) {
+                        if (FSWatch.elapsed().getSeconds() > starvationThreshold) {
+                            FSkipCounter = 0;
+                        } else {
+                            FSkipCounter++;
                         }
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                sendEvent(MainSCEvent.KNTimeout);
-                            }
-                        }, DELAY);
-                        FarbsteinLight.sendEvent(CarsEvent.TurnRed);
-                        KanfeiNesharimLight.sendEvent(CarsEvent.TurnGreen);
-                        for (WalkersLight WL : independentLights) {
-                            WL.sendEvent(WalkersLightEvent.TurnGreen);
-                        }
+                        goToKN();
                         state = RegularSubState.KanfeiNesharim;
                     }
-                    if (event == MainSCEvent.GoToYA && KNSkipCounter < starvationLimit) {
-                        KNSkipCounter++;
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                sendEvent(MainSCEvent.YATimeout);
-                            }
-                        }, DELAY);
-                        FarbsteinLight.sendEvent(CarsEvent.TurnGreen);
-                        KanfeiNesharimLight.sendEvent(CarsEvent.TurnRed);
-                        for (WalkersLight WL : independentLights) {
-                            WL.sendEvent(WalkersLightEvent.TurnRed);
+                    if (event == MainSCEvent.GoToYA && KNSkipCounter < starvationLimit &&
+                            (FSkipCounter < starvationLimit || FSWatch.elapsed().getSeconds() > starvationThreshold
+                            )) {
+                        if (FSWatch.elapsed().getSeconds() > starvationThreshold) {
+                            FSkipCounter = 0;
+                        } else {
+                            FSkipCounter++;
                         }
+                        KNSkipCounter++;
+                        goToYA();
                         state = RegularSubState.YeminAvot;
                     }
-
                     break;
             }
         } while (!exitEvents.contains(event));
         return event;
     }
 
+    private void goToYA() {
+        KNSWatch.reset();
+        FSWatch.reset();
+        YASWatch.reset();
+        YASWatch.start();
+        independentLights.forEach(WL -> WL.sendEvent(WalkersLightEvent.TurnRed));
+        KNSideLight.sendEvent(CarsEvent.TurnRed);
+        KanfeiNesharimLight.sendEvent(CarsEvent.TurnRed);
+        FarbsteinLight.sendEvent(CarsEvent.TurnRed);
+        YeminAvotLight.sendEvent(CarsEvent.TurnGreen);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                sendEvent(MainSCEvent.YATimeout);
+            }
+        }, DELAY);
+    }
+
+    private void goToKN() {
+        KNSWatch.reset();
+        FSWatch.reset();
+        YASWatch.reset();
+        KNSWatch.start();
+        independentLights.forEach(WL -> WL.sendEvent(WalkersLightEvent.TurnGreen));
+        KNSideLight.sendEvent(CarsEvent.TurnGreen);
+        KanfeiNesharimLight.sendEvent(CarsEvent.TurnGreen);
+        FarbsteinLight.sendEvent(CarsEvent.TurnRed);
+        YeminAvotLight.sendEvent(CarsEvent.TurnRed);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                sendEvent(MainSCEvent.KNTimeout);
+            }
+        }, DELAY);
+    }
+
+    private void goToFarbstein() {
+        KNSWatch.reset();
+        FSWatch.reset();
+        YASWatch.reset();
+        FSWatch.start();
+        independentLights.forEach(WL -> WL.sendEvent(WalkersLightEvent.TurnRed));
+        KNSideLight.sendEvent(CarsEvent.TurnGreen);
+        KanfeiNesharimLight.sendEvent(CarsEvent.TurnRed);
+        FarbsteinLight.sendEvent(CarsEvent.TurnGreen);
+        YeminAvotLight.sendEvent(CarsEvent.TurnRed);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                sendEvent(MainSCEvent.FTimeout);
+            }
+        }, DELAY);
+    }
 
     /**
      * states of the regular sub statechart, the states are called after the street which has a cars' green light

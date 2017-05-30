@@ -36,7 +36,7 @@ public class CarsLight extends Thread {
 
 
     public CarsLight(String name, StreetLight streetLight, JPanel panel, int key) {
-        this(name, streetLight, panel, key, new ArrayList<WalkersLight>());
+        this(name, streetLight, panel, key, new ArrayList<>());
     }
 
     /**

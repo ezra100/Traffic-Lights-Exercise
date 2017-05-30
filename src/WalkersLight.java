@@ -30,7 +30,7 @@ class WalkersLight extends Thread {
             switch (externalState) {
                 case ShabatMode:
                     setLight(LightMode.Blank);
-                    WalkersLightEvent temp = null;
+                    WalkersLightEvent temp;
                     do {
                         temp = (WalkersLightEvent) eventReciver.waitEvent();
                     }

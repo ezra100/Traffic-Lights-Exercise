@@ -11,11 +11,11 @@ import javax.swing.JPanel;
 public class CarsMaker extends Thread {
     JPanel myPanel;
     int key;
-    private CarsLight myRamzor;
+    private CarsLight myLight;
 
-    public CarsMaker(JPanel myPanel, CarsLight myRamzor, int key) {
+    public CarsMaker(JPanel myPanel, CarsLight myLight, int key) {
         this.myPanel = myPanel;
-        this.myRamzor = myRamzor;
+        this.myLight = myLight;
         this.key = key;
         setDaemon(true);
         start();
@@ -26,8 +26,8 @@ public class CarsMaker extends Thread {
             //noinspection InfiniteLoopStatement
             while (true) {
                 sleep(300);
-                if (!myRamzor.shouldCarsStop()) {
-                    new CarMoving(myPanel, myRamzor, key);
+                if (!myLight.shouldCarsStop()) {
+                    new CarMoving(myPanel, myLight, key);
                 }
 
             }
