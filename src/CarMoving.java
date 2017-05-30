@@ -64,7 +64,16 @@ public class CarMoving extends Thread {
                 dx = -50;
                 dy = 0;
                 break;
-
+            case 6:
+                x = 850;
+                dx = -100;
+                y = 130;
+                dy = 0;
+                break;
+            case 7:
+                dx = 0;
+                dy = 50;
+                break;
             default:
                 x = 900;
                 dx = -50;
@@ -121,6 +130,20 @@ public class CarMoving extends Thread {
                 return x > 800;
             case 5:
                 return x < -20;
+            case 6:
+                if (x < 400) {
+                    key = 7;
+                    setCarLocationAndMooving();
+                    imageIcon = getImageIcon();
+
+                    myLabel.removeAll();
+                    myLabel.setIcon(imageIcon);
+                    myLabel.setBounds(x, y, imageIcon.getIconWidth(), imageIcon.getIconHeight());
+                    return false;
+                }
+                return false;
+            case 7:
+                return y > 800;
         }
         return false;
     }
@@ -128,6 +151,7 @@ public class CarMoving extends Thread {
     private boolean toStop() {
         switch (key) {
             case 1:
+            case 6:
                 return x > 550;
             case 2:
                 return y > 530;
@@ -135,6 +159,7 @@ public class CarMoving extends Thread {
                 return x < 100;
             case 4:
                 return x <= 150;
+
         }
         return false;
     }
@@ -142,6 +167,7 @@ public class CarMoving extends Thread {
     private ImageIcon getImageIcon() {
         switch (key) {
             case 1:
+            case 6:
                 return new ImageIcon("Images/left.gif");
             case 2:
                 return new ImageIcon("Images/up.gif");
@@ -151,6 +177,8 @@ public class CarMoving extends Thread {
                 return new ImageIcon("Images/right.gif");
             case 5:
                 return new ImageIcon("Images/upLeft.gif");
+            case 7:
+                return new ImageIcon("Images/down.gif");
             default:
                 break;
         }

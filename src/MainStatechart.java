@@ -25,7 +25,6 @@ public class MainStatechart extends Thread {
 
     public static void buttonPressAlert(int buttonKey) {
         MainSCEvent event = null;
-        //TODO take care of all cases and implement the events in the statechart too
         switch (buttonKey) {
             case 4:
             case 5:
@@ -172,7 +171,7 @@ public class MainStatechart extends Thread {
                         for (WalkersLight WL : independentLights) {
                             WL.sendEvent(WalkersLightEvent.TurnGreen);
                         }
-                        state = RegularSubState.YeminAvot;
+                        state = RegularSubState.KanfeiNesharim;
                     }
                     break;
                 case Farbstein:
@@ -207,7 +206,7 @@ public class MainStatechart extends Thread {
                         for (WalkersLight WL : independentLights) {
                             WL.sendEvent(WalkersLightEvent.TurnRed);
                         }
-                        state = RegularSubState.KanfeiNesharim;
+                        state = RegularSubState.YeminAvot;
                     }
 
                     break;
