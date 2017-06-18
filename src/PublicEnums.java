@@ -15,5 +15,5 @@ enum MainSCEvent {
     //timeout for transition inside the statechart
     YATimeout, KNTimeout, FTimeout,
     //Button press
-    YAPress, KNPress, FPress
+    YAPress, KNPress, GoToYA, GoToKN
 }

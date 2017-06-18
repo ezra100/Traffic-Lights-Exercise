@@ -28,11 +28,15 @@ public class CarsLight extends Thread {
         this.dependentWalkersLights = dependentWalkersLights;
 
         new CarsMaker(panel, this, key);
+        if (key == 1) {
+            new CarsMaker(panel, this, 6);
+
+        }
     }
 
 
     public CarsLight(String name, StreetLight streetLight, JPanel panel, int key) {
-        this(name, streetLight, panel, key, new ArrayList<WalkersLight>());
+        this(name, streetLight, panel, key, new ArrayList<>());
     }
 
     /**
@@ -49,6 +53,9 @@ public class CarsLight extends Thread {
                 case ShabatMode:
                     runShabatMode(Collections.singletonList(CarsEvent.RegularMode));
                     state = ExternalState.RegularMode;
+                    dependentWalkersLights.forEach(
+                            (WL) -> WL.sendEvent(WalkersLightEvent.RegularMode)
+                    );
                     break;
                 case RegularMode:
                     startRegularMode(Collections.singletonList(CarsEvent.ShabatMode));
@@ -255,6 +262,7 @@ public class CarsLight extends Thread {
                 streetLight.colorLight[1] = Color.ORANGE;
                 streetLight.colorLight[2] = Color.GRAY;
                 carsShouldStop = true;
+                break;
             case RedOrange:
                 streetLight.colorLight[0] = Color.RED;
                 streetLight.colorLight[1] = Color.ORANGE;

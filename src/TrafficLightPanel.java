@@ -1,7 +1,6 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.util.List;
 import javax.swing.JPanel;
 
 /*
@@ -131,7 +130,7 @@ class TrafficLightPanel extends JPanel {
             page.fillPolygon(x, y, 4);
         }
 
-        page.setFont(new Font("Courier New", Font.CENTER_BASELINE, 12));
+        page.setFont(new Font("Courier New", Font.BOLD, 12));
         for (i = 0; i < lights.length; i++) {
             lights[i].draw(page);
             page.setColor(Color.BLACK);
