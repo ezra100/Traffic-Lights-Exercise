@@ -1,31 +1,17 @@
-/*
- * Created by JFormDesigner on Wed May 30 18:06:46 IDT 2012
- */
-
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import javax.swing.*;
+/*
+ * Created by JFormDesigner on Mon Jun 26 20:15:17 IDT 2017
+ */
 
-import java.net.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * @author Roee Sefi
+ * @author Ezra Steinmetz
  */
-@SuppressWarnings("serial")
 public class ServerPanel extends JFrame {
-    public Boolean isControlled = false;
-    public Boolean isAlive;
-    Integer currIndex;
-    ExtendedSocket currSocket;
-    private List<ExtendedSocket> mySockets;
-    private List<Event64> myJunctions;
-    private List<CarState> carState; // "Cars Manual" or not
-    private List<Boolean> isFrozen; // Is junction frozen
+    final String pathToTLJar = "\"C:\\Users\\User\\workspace\\TrafficLights\\out\\artifacts\\TrafficLights_jar\\TrafficLights.jar\"";
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - Ezra Steinmetz
     private JLabel label1;
@@ -42,220 +28,70 @@ public class ServerPanel extends JFrame {
     private JButton btnFreeze;
     private JComboBox comboBox1;
     private JLabel label3;
-
+    private JButton startInstanceBtn;
+    private JTextField instanceName;
     public ServerPanel() {
         initComponents();
-        isAlive = true;
-        mySockets = new ArrayList<>();
-        myJunctions = new ArrayList<>();
-        carState = new ArrayList<>();
-        isFrozen = new ArrayList<>();
-        currSocket = null;
-        lockButtons();
-        btnDisconnect.setEnabled(false);
-
-        pack();
-        setVisible(true);
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public void AddSocket(Socket newSocket, Dialog770 newDialog) {
-        ExtendedSocket newExSocket = new ExtendedSocket("Junction " + mySockets.size(),
-                newSocket, newDialog);
-        this.mySockets.add(newExSocket);
-        this.myJunctions.add(newDialog.evJunction);
-        carState.add(CarState.ENABLED);
-        isFrozen.add(false);
-        cboSockets.addItem(newExSocket);
-
-        if (this.mySockets.size() >= 2)
-            btnConnect.setEnabled(true);
-        else if (this.mySockets.size() >= 1) {
-            btnShabbos.setEnabled(true);
-            btnFreeze.setEnabled(true);
-            btnDisableCars.setEnabled(true);
-            btnManualCars.setEnabled(true);
-            btnSetPosition.setEnabled(true);
-        }
-    }
-
-    private void cboSocketsActionPerformed(ActionEvent e) {
-        currIndex = cboSockets.getSelectedIndex();
-        currSocket = mySockets.get(currIndex);
-
-        updateButtons();
-    }
-
-    private void updateButtons() {
-        switch (carState.get(currIndex)) {
-            case ENABLED:
-                btnEnableCars.setEnabled(false);
-                btnDisableCars.setEnabled(true);
-                btnManualCars.setEnabled(true);
-                btnGenCar.setEnabled(false);
-                break;
-            case DISABLED:
-                btnEnableCars.setEnabled(true);
-                btnDisableCars.setEnabled(false);
-                btnManualCars.setEnabled(true);
-                btnGenCar.setEnabled(false);
-                break;
-            case MANUAL:
-                btnEnableCars.setEnabled(true);
-                btnDisableCars.setEnabled(true);
-                btnManualCars.setEnabled(false);
-                btnGenCar.setEnabled(true);
-                break;
-        }
-        if (isFrozen.get(currIndex)) {
-            btnFreeze.setText("UnFreeze");
-        } else {
-            btnFreeze.setText("Freeze");
-        }
-    }
-
-    private void btnShabbosActionPerformed(ActionEvent e) {
-        currSocket.dialog.bufferSocketOut.println("evShabbos");
-    }
-
-    private void btnFreezeActionPerformed(ActionEvent e) {
-        currSocket.dialog.bufferSocketOut.println("evFreeze");
-        isFrozen.set(currIndex, !isFrozen.get(currIndex));
-        updateButtons();
-    }
-
-    private void btnEnableCarsActionPerformed(ActionEvent e) {
-        currSocket.dialog.bufferSocketOut.println("evEnableCars");
-        carState.set(currIndex, CarState.ENABLED);
-        updateButtons();
-    }
-
-    private void btnDisableCarsActionPerformed(ActionEvent e) {
-        currSocket.dialog.bufferSocketOut.println("evDisableCars");
-        carState.set(currIndex, CarState.DISABLED);
-        updateButtons();
-    }
-
-    private void btnManualCarsActionPerformed(ActionEvent e) {
-        currSocket.dialog.bufferSocketOut.println("evManualCars");
-        carState.set(currIndex, CarState.MANUAL);
-        updateButtons();
-    }
-
-    private void btnGenCarActionPerformed(ActionEvent e) {
-        String op;
-        op = JOptionPane.showInputDialog("Plase enter ramzor(0-3)-car_key:");
-        Pattern p = Pattern.compile("(\\d)-(\\d+)");
-        Matcher m = p.matcher(op);
-        if (m.find())
-            currSocket.dialog.bufferSocketOut.println("evGenCar" + m.group(0));
-    }
-
-    private void btnSetPositionActionPerformed(ActionEvent e) {
-        String op;
-        op = JOptionPane.showInputDialog("Plase enter position(0-Left, 1-Middle, 2-Right, 3-Normal):");
-        switch (op) {
-            case "0":
-                currSocket.dialog.bufferSocketOut.println("evPosLeft");
-                break;
-            case "1":
-                currSocket.dialog.bufferSocketOut.println("evPosMid");
-                break;
-            case "2":
-                currSocket.dialog.bufferSocketOut.println("evPosRight");
-                break;
-            case "3":
-                switch (carState.get(currIndex)) {
-                    case ENABLED:
-                        currSocket.dialog.bufferSocketOut.println("evEnableCars");
-                        break;
-                    case DISABLED:
-                        currSocket.dialog.bufferSocketOut.println("evDisableCars");
-                        break;
-                    case MANUAL:
-                        currSocket.dialog.bufferSocketOut.println("evManualCars");
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void btnConnectActionPerformed(ActionEvent e) {
-        lockButtons();
-        connectJunctions();
-
-        Controller.theInstance(mySockets, myJunctions);
-        isControlled = true;
-    }
-
-    private void btnDisconnectActionPerformed(ActionEvent e) {
-        isControlled = false;
-        disconnectJunctions();
-        Controller.instance.stop = true; // Kill the process
-        try {
-            Controller.instance.join();
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
-        unlockButtons();
-    }
-
-    private void lockButtons() {
-        btnShabbos.setEnabled(false);
-        btnFreeze.setEnabled(false);
-        btnEnableCars.setEnabled(false);
-        btnDisableCars.setEnabled(false);
-        btnManualCars.setEnabled(false);
-        btnGenCar.setEnabled(false);
-        btnSetPosition.setEnabled(false);
-        btnConnect.setEnabled(false);
-        btnDisconnect.setEnabled(true);
-    }
-
-    private void unlockButtons() {
-        btnShabbos.setEnabled(true);
-        btnFreeze.setEnabled(true);
-        updateButtons();
-        btnSetPosition.setEnabled(true);
-        btnConnect.setEnabled(true);
-        btnDisconnect.setEnabled(false);
-    }
-
-    private void connectJunctions() {
-        for (int i = 1; i < mySockets.size() - 1; i++) {
-            mySockets.get(i).dialog.bufferSocketOut.println("evPosMid");
-        }
-        mySockets.get(0).dialog.bufferSocketOut.println("evPosLeft");
-        mySockets.get(mySockets.size() - 1).dialog.bufferSocketOut.println("evPosRight");
-    }
-
-    private void disconnectJunctions() {
-        for (int i = 0; i < mySockets.size(); i++) {
-            switch (carState.get(i)) {
-                case ENABLED:
-                    mySockets.get(i).dialog.bufferSocketOut.println("evEnableCars");
-                    break;
-                case DISABLED:
-                    mySockets.get(i).dialog.bufferSocketOut.println("evDisableCars");
-                    break;
-                case MANUAL:
-                    mySockets.get(i).dialog.bufferSocketOut.println("evManualCars");
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 
     private void thisWindowClosing(WindowEvent e) {
-        isAlive = false;
+        // TODO add your code here
     }
 
-    @SuppressWarnings("rawtypes")
+    private void cboSocketsActionPerformed(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void btnShabbosActionPerformed(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void btnDisableCarsActionPerformed(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void btnEnableCarsActionPerformed(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void btnManualCarsActionPerformed(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void btnDisconnectActionPerformed(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void btnGenCarActionPerformed(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void btnConnectActionPerformed(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void btnSetPositionActionPerformed(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void btnFreezeActionPerformed(ActionEvent e) {
+        // TODO add your code here
+    }
+
+    private void startInstanceActionPerformed(ActionEvent e) {
+        String instanceNameText = instanceName.getText();
+
+        try {
+            Runtime.getRuntime().exec("java -jar " + pathToTLJar + " " + instanceNameText);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
+
+    private void button1ActionPerformed(ActionEvent e) {
+        // TODO add your code here
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Evaluation license - Ezra Steinmetz
@@ -273,6 +109,8 @@ public class ServerPanel extends JFrame {
         btnFreeze = new JButton();
         comboBox1 = new JComboBox();
         label3 = new JLabel();
+        startInstanceBtn = new JButton();
+        instanceName = new JTextField();
 
         //======== this ========
         setTitle("Main Control");
@@ -363,6 +201,14 @@ public class ServerPanel extends JFrame {
         contentPane.add(label3);
         label3.setBounds(new Rectangle(new Point(50, 110), label3.getPreferredSize()));
 
+        //---- startInstanceBtn ----
+        startInstanceBtn.setText("Start instance");
+        startInstanceBtn.addActionListener(e -> startInstanceActionPerformed(e));
+        contentPane.add(startInstanceBtn);
+        startInstanceBtn.setBounds(325, 110, 115, 35);
+        contentPane.add(instanceName);
+        instanceName.setBounds(325, 80, 116, instanceName.getPreferredSize().height);
+
         { // compute preferred size
             Dimension preferredSize = new Dimension();
             for (int i = 0; i < contentPane.getComponentCount(); i++) {
@@ -380,7 +226,5 @@ public class ServerPanel extends JFrame {
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
-
-    private enum CarState {ENABLED, DISABLED, MANUAL}
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

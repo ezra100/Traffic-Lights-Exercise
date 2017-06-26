@@ -110,5 +110,7 @@ public class Main {
                 }
         );
         tlf.myPanel.add(butt[12]);
+        SocketHandler socketHandler = new SocketHandler(args[0]);
+        socketHandler.start();
     }
 }

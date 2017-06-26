@@ -142,6 +142,23 @@ new FormModel {
 				"x": 50
 				"y": 110
 			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "startInstanceBtn"
+				"text": "Start instance"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button1ActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 325
+				"y": 110
+				"width": 115
+				"height": 35
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "instanceName"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 325
+				"y": 80
+				"width": 116
+			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 25, 10 )
 			"size": new java.awt.Dimension( 535, 375 )
