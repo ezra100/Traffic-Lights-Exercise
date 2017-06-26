@@ -8,8 +8,8 @@ public class MainStatechart extends Thread {
 
     private static MainStatechart lastInstance;
     final int starvationLimit = 2;
-    final int starvationThreshold = 5;
-    private final long DELAY = 10000;
+    final int starvationThreshold = 3;
+    private final long DELAY = 5000;
     List<WalkersLight> independentLights;
     Event64 eventReciver = new Event64();
     int FSkipCounter = 0, KNSkipCounter = 0, YASkipCounter = 0;
@@ -106,6 +106,10 @@ public class MainStatechart extends Thread {
 
     private void sendEvent(MainSCEvent event) {
         eventReciver.sendEvent(event);
+    }
+
+    public void sendEvent(String msg) {
+        //TODO
     }
 
     private MainSCEvent runRegularMode(List<MainSCEvent> exitEvents) {

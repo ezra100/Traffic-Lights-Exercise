@@ -1,0 +1,150 @@
+JFDML JFormDesigner: "6.0.1.0.112" Java: "1.8.0_112-release" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class com.jformdesigner.runtime.NullLayout ) ) {
+			name: "this"
+			"title": "Main Control"
+			"$sizePolicy": 1
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "thisWindowClosing", true ) )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "Control"
+				"font": new java.awt.Font( "Tahoma", 0, 24 )
+				"horizontalAlignment": 0
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 60
+				"y": 15
+				"width": 395
+				"height": 55
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label2"
+				"text": "Junction:"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 60
+				"y": 65
+				"width": 60
+				"height": 35
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cboSockets"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cboSocketsActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 130
+				"y": 70
+				"width": 130
+				"height": 25
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "btnShabbos"
+				"text": "Shabbos Button"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnShabbosActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 35
+				"y": 155
+				"width": 145
+				"height": 80
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "btnDisableCars"
+				"text": "Disable Cars"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnDisableCarsActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 180
+				"y": 196
+				"width": 120
+				"height": 40
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "btnEnableCars"
+				"text": "Enable Cars"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnEnableCarsActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 180
+				"y": 155
+				"width": 120
+				"height": 40
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "btnManualCars"
+				"text": "Manual Cars"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnManualCarsActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 180
+				"y": 237
+				"width": 120
+				"height": 40
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "btnDisconnect"
+				"text": "Disconnect"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnDisconnectActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 302
+				"y": 265
+				"width": 155
+				"height": 53
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "btnGenCar"
+				"text": "Generate Car"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnGenCarActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 180
+				"y": 278
+				"width": 120
+				"height": 40
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "btnConnect"
+				"text": "Connect"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnConnectActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 302
+				"y": 213
+				"width": 155
+				"height": 49
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "btnSetPosition"
+				"text": "Set Position"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnSetPositionActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 302
+				"y": 155
+				"width": 155
+				"height": 55
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "btnFreeze"
+				"text": "Freeze"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnFreezeActionPerformed", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 35
+				"y": 235
+				"width": 145
+				"height": 83
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "comboBox1"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 131
+				"y": 105
+				"width": 135
+				"height": 25
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label3"
+				"text": "Button No.:"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
+				"x": 50
+				"y": 110
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 25, 10 )
+			"size": new java.awt.Dimension( 535, 375 )
+		} )
+	}
+}
