@@ -35,35 +35,36 @@ public class CarMoving extends Thread {
 
     private void setCarLocationAndMooving() {
         switch (key) {
-            case 1:
+            case 1: //YA to KN
                 x = 850;
                 dx = -100;
                 y = 70;
                 dy = 0;
                 break;
-            case 2:
+            case 2: //Farb to KN p1
                 x = 500;
                 dx = 0;
                 y = 720;
                 dy = -50;
                 break;
-            case 3:
+            case 3: //KN to Farb
                 x = -30;
                 dx = 35;
                 y = 405;
                 dy = 22;
                 break;
-            case 4:
+            case 4: //KN to YA
                 x = -30;
                 dx = 50;
                 y = 390;
                 dy = 0;
                 break;
 
-            case 5:
+            case 5: //Farb to KN p2
                 dx = -50;
                 dy = 0;
                 break;
+
             case 6:
                 x = 850;
                 dx = -100;
