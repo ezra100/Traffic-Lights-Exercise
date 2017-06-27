@@ -6,6 +6,7 @@ import java.net.*;
  */
 public class SocketHandler extends Thread {
 
+    final String SH_PRESS_CODE = "ShPress";
     public PrintWriter bufferSocketOut;
     Event64 myConnetion;
     String SERVERHOST = "127.0.0.1";
@@ -33,7 +34,11 @@ public class SocketHandler extends Thread {
             bufferSocketOut.println(clientName);
             while (true) {
                 line = bufferSocketIn.readLine(); // reads a line from the server
-                MainStatechart.buttonPressAlert(Integer.parseInt(line));
+                if (line.equals(SH_PRESS_CODE)) {
+                    MainStatechart.shbatPress();
+                } else {
+                    MainStatechart.buttonPressAlert(Integer.parseInt(line));
+                }
             }
         } catch (IOException e) {
             System.err.println(e);

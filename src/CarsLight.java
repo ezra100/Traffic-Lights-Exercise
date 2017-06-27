@@ -279,7 +279,7 @@ public class CarsLight extends Thread {
                 streetLight.colorLight[0] = Color.GRAY;
                 streetLight.colorLight[1] = Color.GRAY;
                 streetLight.colorLight[2] = Color.GRAY;
-                carsShouldStop = false;
+                carsShouldStop = true;
                 break;
         }
         panel.repaint();

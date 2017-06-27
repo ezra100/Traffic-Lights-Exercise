@@ -1,6 +1,7 @@
 import java.util.*;
 
 import com.google.common.base.Stopwatch;
+
 /**
  * Created by Ezra Steinmetz and Tomer Trabelsy on 22-May-17.
  */
@@ -8,8 +9,8 @@ public class MainStatechart extends Thread {
 
     private static MainStatechart lastInstance;
     final int starvationLimit = 2;
-    final int starvationThreshold = 3;
-    private final long DELAY = 5000;
+    final int starvationThreshold = 4;
+    private final long DELAY = 8500;
     List<WalkersLight> independentLights;
     Event64 eventReciver = new Event64();
     int FSkipCounter = 0, KNSkipCounter = 0, YASkipCounter = 0;
@@ -108,6 +109,7 @@ public class MainStatechart extends Thread {
         eventReciver.sendEvent(event);
     }
 
+
     public void sendEvent(String msg) {
         //TODO
     }
@@ -151,6 +153,11 @@ public class MainStatechart extends Thread {
                     }
                     if (event == MainSCEvent.GoToKN && FSkipCounter < starvationLimit
                             && (YASkipCounter < starvationLimit || YASWatch.elapsed().getSeconds() > starvationThreshold)) {
+                        if (YASWatch.elapsed().getSeconds() > starvationThreshold) {
+                            YASkipCounter = 0;
+                        } else {
+                            YASkipCounter++;
+                        }
                         goToKN();
                         state = RegularSubState.KanfeiNesharim;
                     }

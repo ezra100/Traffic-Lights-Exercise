@@ -1,10 +1,14 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.CharBuffer;
+import java.io.PrintWriter;
+import java.net.Socket;
 import javax.swing.*;
+import javax.swing.border.*;
+
+import com.intellij.uiDesigner.core.*;
+//import com.jgoodies.forms.factories.*;
+import net.miginfocom.swing.*;
 /*
  * Created by JFormDesigner on Mon Jun 26 20:15:17 IDT 2017
  */
@@ -14,29 +18,41 @@ import javax.swing.*;
  * @author Ezra Steinmetz
  */
 public class ServerPanel extends JFrame {
+    static ServerPanel instance;
+    final String SH_PRESS_CODE = "ShPress";
     final String pathToTLJar = "\"out\\artifacts\\TrafficLights_jar\\TrafficLights.jar\"";
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - Ezra Steinmetz
-    private JLabel label1;
-    private JLabel label2;
-    private JComboBox cboSockets;
     private JButton btnShabbos;
-    private JButton btnDisableCars;
-    private JButton btnEnableCars;
-    private JButton btnManualCars;
-    private JButton btnDisconnect;
-    private JButton btnGenCar;
-    private JButton btnConnect;
-    private JButton btnSetPosition;
-    private JButton btnFreeze;
-    private JComboBox comboBox1;
+    private JPanel panel2;
+    private JPanel panel3;
+    private JPanel panel4;
+    private JPanel panel1;
+    private JLabel label2;
+    private JComboBox JunctionListCB;
     private JLabel label3;
-    private JButton startInstanceBtn;
+    private JComboBox ButtonComboBox;
+    private JButton button1;
+    private JPanel panel6;
+    private JInternalFrame internalFrame1;
+    private JLabel label1;
     private JTextField instanceName;
+    // JFormDesigner - End of variables declaration  //GEN-END:variables
+    private JButton startInstanceBtn;
+
     public ServerPanel() {
+        instance = this;
         initComponents();
+        for (int i = 0; i < 16; i++) {
+            ButtonComboBox.addItem(i);
+        }
     }
 
+    public static void addJunction(String junction) {
+        instance.JunctionListCB.addItem(junction);
+    }
+
+    //region EmptyImplementations
     private void thisWindowClosing(WindowEvent e) {
         // TODO add your code here
     }
@@ -46,7 +62,15 @@ public class ServerPanel extends JFrame {
     }
 
     private void btnShabbosActionPerformed(ActionEvent e) {
-        // TODO add your code here
+        Socket socket = Listener.getMap().get(JunctionListCB.getSelectedItem());
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(socket.getOutputStream(), true);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        writer.println(SH_PRESS_CODE);
+
     }
 
     private void btnDisableCarsActionPerformed(ActionEvent e) {
@@ -80,8 +104,10 @@ public class ServerPanel extends JFrame {
     private void btnFreezeActionPerformed(ActionEvent e) {
         // TODO add your code here
     }
+    //endregion
 
-    private void startInstanceActionPerformed(ActionEvent e) {
+
+    private void button1ActionPerformed(ActionEvent e) {
         String instanceNameText = instanceName.getText();
 
         try {
@@ -92,32 +118,40 @@ public class ServerPanel extends JFrame {
         }
     }
 
-    private void button1ActionPerformed(ActionEvent e) {
-        // TODO add your code here
+    private void sendButtonCommandEvent(ActionEvent e) {
+        Socket socket = Listener.getMap().get(JunctionListCB.getSelectedItem());
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(socket.getOutputStream(), true);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        writer.println(ButtonComboBox.getSelectedItem().toString());
+
     }
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Evaluation license - Ezra Steinmetz
-        label1 = new JLabel();
-        label2 = new JLabel();
-        cboSockets = new JComboBox();
         btnShabbos = new JButton();
-        btnDisableCars = new JButton();
-        btnEnableCars = new JButton();
-        btnManualCars = new JButton();
-        btnDisconnect = new JButton();
-        btnGenCar = new JButton();
-        btnConnect = new JButton();
-        btnSetPosition = new JButton();
-        btnFreeze = new JButton();
-        comboBox1 = new JComboBox();
+        panel2 = new JPanel();
+        panel3 = new JPanel();
+        panel4 = new JPanel();
+        panel1 = new JPanel();
+        label2 = new JLabel();
+        JunctionListCB = new JComboBox();
         label3 = new JLabel();
-        startInstanceBtn = new JButton();
+        ButtonComboBox = new JComboBox();
+        button1 = new JButton();
+        panel6 = new JPanel();
+        internalFrame1 = new JInternalFrame();
+        label1 = new JLabel();
         instanceName = new JTextField();
+        startInstanceBtn = new JButton();
 
         //======== this ========
         setTitle("Main Control");
+        setMinimumSize(new Dimension(80, 39));
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -127,91 +161,133 @@ public class ServerPanel extends JFrame {
         Container contentPane = getContentPane();
         contentPane.setLayout(null);
 
-        //---- label1 ----
-        label1.setText("Control");
-        label1.setFont(new Font("Tahoma", Font.PLAIN, 24));
-        label1.setHorizontalAlignment(SwingConstants.CENTER);
-        contentPane.add(label1);
-        label1.setBounds(60, 15, 395, 55);
-
-        //---- label2 ----
-        label2.setText("Junction:");
-        contentPane.add(label2);
-        label2.setBounds(60, 65, 60, 35);
-
-        //---- cboSockets ----
-        cboSockets.addActionListener(e -> cboSocketsActionPerformed(e));
-        contentPane.add(cboSockets);
-        cboSockets.setBounds(130, 70, 130, 25);
-
         //---- btnShabbos ----
         btnShabbos.setText("Shabbos Button");
         btnShabbos.addActionListener(e -> btnShabbosActionPerformed(e));
         contentPane.add(btnShabbos);
-        btnShabbos.setBounds(35, 155, 145, 80);
+        btnShabbos.setBounds(60, 210, 130, 55);
 
-        //---- btnDisableCars ----
-        btnDisableCars.setText("Disable Cars");
-        btnDisableCars.addActionListener(e -> btnDisableCarsActionPerformed(e));
-        contentPane.add(btnDisableCars);
-        btnDisableCars.setBounds(180, 196, 120, 40);
+        //======== panel2 ========
+        {
 
-        //---- btnEnableCars ----
-        btnEnableCars.setText("Enable Cars");
-        btnEnableCars.addActionListener(e -> btnEnableCarsActionPerformed(e));
-        contentPane.add(btnEnableCars);
-        btnEnableCars.setBounds(180, 155, 120, 40);
+            // JFormDesigner evaluation mark
+            panel2.setBorder(new javax.swing.border.CompoundBorder(
+                    new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+                            "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+                            javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+                            java.awt.Color.red), panel2.getBorder()));
+            panel2.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+                public void propertyChange(java.beans.PropertyChangeEvent e) {
+                    if ("border".equals(e.getPropertyName())) throw new RuntimeException();
+                }
+            });
 
-        //---- btnManualCars ----
-        btnManualCars.setText("Manual Cars");
-        btnManualCars.addActionListener(e -> btnManualCarsActionPerformed(e));
-        contentPane.add(btnManualCars);
-        btnManualCars.setBounds(180, 237, 120, 40);
+            panel2.setLayout(null);
+        }
+        contentPane.add(panel2);
+        panel2.setBounds(45, 60, panel2.getPreferredSize().width, 0);
 
-        //---- btnDisconnect ----
-        btnDisconnect.setText("Disconnect");
-        btnDisconnect.addActionListener(e -> btnDisconnectActionPerformed(e));
-        contentPane.add(btnDisconnect);
-        btnDisconnect.setBounds(302, 265, 155, 53);
+        //======== panel3 ========
+        {
+            panel3.setLayout(null);
+        }
+        contentPane.add(panel3);
+        panel3.setBounds(60, 35, panel3.getPreferredSize().width, 0);
 
-        //---- btnGenCar ----
-        btnGenCar.setText("Generate Car");
-        btnGenCar.addActionListener(e -> btnGenCarActionPerformed(e));
-        contentPane.add(btnGenCar);
-        btnGenCar.setBounds(180, 278, 120, 40);
+        //======== panel4 ========
+        {
+            panel4.setBorder(new TitledBorder("Send Command"));
 
-        //---- btnConnect ----
-        btnConnect.setText("Connect");
-        btnConnect.addActionListener(e -> btnConnectActionPerformed(e));
-        contentPane.add(btnConnect);
-        btnConnect.setBounds(302, 213, 155, 49);
+            //======== panel1 ========
+            {
+                panel1.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
 
-        //---- btnSetPosition ----
-        btnSetPosition.setText("Set Position");
-        btnSetPosition.addActionListener(e -> btnSetPositionActionPerformed(e));
-        contentPane.add(btnSetPosition);
-        btnSetPosition.setBounds(302, 155, 155, 55);
+                //---- label2 ----
+                label2.setText("Junction:");
+                panel1.add(label2, new GridConstraints(0, 0, 1, 1,
+                        GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE,
+                        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+                        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+                        null, null, null));
 
-        //---- btnFreeze ----
-        btnFreeze.setText("Freeze");
-        btnFreeze.addActionListener(e -> btnFreezeActionPerformed(e));
-        contentPane.add(btnFreeze);
-        btnFreeze.setBounds(35, 235, 145, 83);
-        contentPane.add(comboBox1);
-        comboBox1.setBounds(131, 105, 135, 25);
+                //---- JunctionListCB ----
+                JunctionListCB.addActionListener(e -> cboSocketsActionPerformed(e));
+                panel1.add(JunctionListCB, new GridConstraints(0, 1, 1, 1,
+                        GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE,
+                        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+                        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+                        null, null, null));
 
-        //---- label3 ----
-        label3.setText("Button No.:");
-        contentPane.add(label3);
-        label3.setBounds(new Rectangle(new Point(50, 110), label3.getPreferredSize()));
+                //---- label3 ----
+                label3.setText("Button No.:");
+                panel1.add(label3, new GridConstraints(1, 0, 1, 1,
+                        GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE,
+                        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+                        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+                        null, null, null));
+                panel1.add(ButtonComboBox, new GridConstraints(1, 1, 1, 1,
+                        GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE,
+                        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+                        GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
+                        null, null, null));
+            }
+            panel4.add(panel1);
 
-        //---- startInstanceBtn ----
-        startInstanceBtn.setText("Start instance");
-        startInstanceBtn.addActionListener(e -> startInstanceActionPerformed(e));
-        contentPane.add(startInstanceBtn);
-        startInstanceBtn.setBounds(325, 110, 115, 35);
-        contentPane.add(instanceName);
-        instanceName.setBounds(325, 80, 116, instanceName.getPreferredSize().height);
+            //---- button1 ----
+            button1.setText("Send Button Command");
+            button1.addActionListener(e -> sendButtonCommandEvent(e));
+            panel4.add(button1);
+        }
+        contentPane.add(panel4);
+        panel4.setBounds(40, 55, 170, 225);
+
+        //======== panel6 ========
+        {
+            panel6.setLayout(new BorderLayout(2, 2));
+        }
+        contentPane.add(panel6);
+        panel6.setBounds(new Rectangle(new Point(270, 250), panel6.getPreferredSize()));
+
+        //======== internalFrame1 ========
+        {
+            internalFrame1.setVisible(true);
+            internalFrame1.setBorder(new EtchedBorder());
+            internalFrame1.setTitle("Start New Instance");
+            Container internalFrame1ContentPane = internalFrame1.getContentPane();
+            internalFrame1ContentPane.setLayout(null);
+
+            //---- label1 ----
+            label1.setText("Name:");
+            internalFrame1ContentPane.add(label1);
+            label1.setBounds(new Rectangle(new Point(20, 10), label1.getPreferredSize()));
+
+            //---- instanceName ----
+            instanceName.setAlignmentX(3.5F);
+            internalFrame1ContentPane.add(instanceName);
+            instanceName.setBounds(65, 5, 80, instanceName.getPreferredSize().height);
+
+            //---- startInstanceBtn ----
+            startInstanceBtn.setText("Start instance");
+            startInstanceBtn.addActionListener(e -> button1ActionPerformed(e));
+            internalFrame1ContentPane.add(startInstanceBtn);
+            startInstanceBtn.setBounds(15, 35, 125, startInstanceBtn.getPreferredSize().height);
+
+            { // compute preferred size
+                Dimension preferredSize = new Dimension();
+                for (int i = 0; i < internalFrame1ContentPane.getComponentCount(); i++) {
+                    Rectangle bounds = internalFrame1ContentPane.getComponent(i).getBounds();
+                    preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+                    preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+                }
+                Insets insets = internalFrame1ContentPane.getInsets();
+                preferredSize.width += insets.right;
+                preferredSize.height += insets.bottom;
+                internalFrame1ContentPane.setMinimumSize(preferredSize);
+                internalFrame1ContentPane.setPreferredSize(preferredSize);
+            }
+        }
+        contentPane.add(internalFrame1);
+        internalFrame1.setBounds(245, 115, 175, 115);
 
         { // compute preferred size
             Dimension preferredSize = new Dimension();
@@ -230,5 +306,4 @@ public class ServerPanel extends JFrame {
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
-    // JFormDesigner - End of variables declaration  //GEN-END:variables
 }
