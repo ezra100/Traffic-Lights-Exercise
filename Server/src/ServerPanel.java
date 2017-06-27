@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.CharBuffer;
 import javax.swing.*;
 /*
  * Created by JFormDesigner on Mon Jun 26 20:15:17 IDT 2017
@@ -11,7 +14,7 @@ import javax.swing.*;
  * @author Ezra Steinmetz
  */
 public class ServerPanel extends JFrame {
-    final String pathToTLJar = "\"C:\\Users\\User\\workspace\\TrafficLights\\out\\artifacts\\TrafficLights_jar\\TrafficLights.jar\"";
+    final String pathToTLJar = "\"out\\artifacts\\TrafficLights_jar\\TrafficLights.jar\"";
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - Ezra Steinmetz
     private JLabel label1;
@@ -83,6 +86,7 @@ public class ServerPanel extends JFrame {
 
         try {
             Runtime.getRuntime().exec("java -jar " + pathToTLJar + " " + instanceNameText);
+
         } catch (IOException e1) {
             e1.printStackTrace();
         }
