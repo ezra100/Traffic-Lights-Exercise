@@ -8,7 +8,7 @@ import javax.swing.border.*;
 
 import com.intellij.uiDesigner.core.*;
 //import com.jgoodies.forms.factories.*;
-import net.miginfocom.swing.*;
+
 /*
  * Created by JFormDesigner on Mon Jun 26 20:15:17 IDT 2017
  */
@@ -37,8 +37,8 @@ public class ServerPanel extends JFrame {
     private JInternalFrame internalFrame1;
     private JLabel label1;
     private JTextField instanceName;
-    // JFormDesigner - End of variables declaration  //GEN-END:variables
     private JButton startInstanceBtn;
+    // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     public ServerPanel() {
         instance = this;
@@ -52,7 +52,6 @@ public class ServerPanel extends JFrame {
         instance.JunctionListCB.addItem(junction);
     }
 
-    //region EmptyImplementations
     private void thisWindowClosing(WindowEvent e) {
         // TODO add your code here
     }
@@ -73,43 +72,11 @@ public class ServerPanel extends JFrame {
 
     }
 
-    private void btnDisableCarsActionPerformed(ActionEvent e) {
-        // TODO add your code here
-    }
-
-    private void btnEnableCarsActionPerformed(ActionEvent e) {
-        // TODO add your code here
-    }
-
-    private void btnManualCarsActionPerformed(ActionEvent e) {
-        // TODO add your code here
-    }
-
-    private void btnDisconnectActionPerformed(ActionEvent e) {
-        // TODO add your code here
-    }
-
-    private void btnGenCarActionPerformed(ActionEvent e) {
-        // TODO add your code here
-    }
-
-    private void btnConnectActionPerformed(ActionEvent e) {
-        // TODO add your code here
-    }
-
-    private void btnSetPositionActionPerformed(ActionEvent e) {
-        // TODO add your code here
-    }
-
-    private void btnFreezeActionPerformed(ActionEvent e) {
-        // TODO add your code here
-    }
-    //endregion
-
-
-    private void button1ActionPerformed(ActionEvent e) {
+    private void createJunctionAction(ActionEvent e) {
         String instanceNameText = instanceName.getText();
-
+        if (instanceNameText.equals("") || Listener.getMap().containsKey(instanceNameText)) {
+            return;
+        }
         try {
             Runtime.getRuntime().exec("java -jar " + pathToTLJar + " " + instanceNameText);
 
@@ -268,7 +235,7 @@ public class ServerPanel extends JFrame {
 
             //---- startInstanceBtn ----
             startInstanceBtn.setText("Start instance");
-            startInstanceBtn.addActionListener(e -> button1ActionPerformed(e));
+            startInstanceBtn.addActionListener(e -> createJunctionAction(e));
             internalFrame1ContentPane.add(startInstanceBtn);
             startInstanceBtn.setBounds(15, 35, 125, startInstanceBtn.getPreferredSize().height);
 
